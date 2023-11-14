@@ -54,21 +54,24 @@ function buscarCotacaoEntrada() {
     var valor = document.getElementById("idValor").value
     var xhr = new XMLHttpRequest()
 
-    console.log(moedaEntrada)
-    xhr.open("GET", "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaDia(moeda=@moeda,dataCotacao=@dataCotacao)?@moeda='"+moedaEntrada+"'&@dataCotacao='"+dataAt+"'&$top=100&$format=json&$select=paridadeCompra,paridadeVenda,cotacaoCompra,cotacaoVenda,dataHoraCotacao,tipoBoletim")
-    
-    xhr.addEventListener("load", function () {
-        let resposta = xhr.responseText
-        let moedas = JSON.parse(resposta)
-        console.log("moedas")
-        console.log(moedas)
-
-        let tamanho = moedas.value.length 
-        // conversao da primera moeda para reais
-        conversao1 = valor * moedas.value[tamanho-1].cotacaoCompra;
+    if (moedaEntrada == 'BRL') {
+        conversao1 = valor;
         console.log(conversao1)
-    })
-    xhr.send()
+    } else {
+        xhr.open("GET", "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaDia(moeda=@moeda,dataCotacao=@dataCotacao)?@moeda='" + moedaEntrada + "'&@dataCotacao='" + dataAt + "'&$top=100&$format=json&$select=paridadeCompra,paridadeVenda,cotacaoCompra,cotacaoVenda,dataHoraCotacao,tipoBoletim")
+        xhr.addEventListener("load", function () {
+            let resposta = xhr.responseText
+            let moedas = JSON.parse(resposta)
+            console.log("moedas")
+            console.log(moedas)
+
+            let tamanho = moedas.value.length
+            // conversao da primera moeda para reais
+            conversao1 = valor * moedas.value[tamanho - 1].cotacaoCompra;
+            console.log(conversao1)
+        })
+        xhr.send()
+    }
     buscarCotacaoSaida()
 }
 // converte real para a moeda de saida
@@ -76,20 +79,25 @@ function buscarCotacaoSaida() {
     var moedaSaida = document.getElementById("idMoedas2").value
     var xhr = new XMLHttpRequest()
 
-    xhr.open("GET", "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaDia(moeda=@moeda,dataCotacao=@dataCotacao)?@moeda='"+moedaSaida+"'&@dataCotacao='"+dataAt+"'&$top=100&$format=json&$select=paridadeCompra,paridadeVenda,cotacaoCompra,cotacaoVenda,dataHoraCotacao,tipoBoletim")
-    
-    xhr.addEventListener("load", function () {
-        let resposta = xhr.responseText
-        let moedas = JSON.parse(resposta)
-        console.log("moedas")
-        console.log(moedas)
-
-        let tamanho = moedas.value.length 
-        // conversao de reais pra moeda de saida
-        conversao2 = conversao1 / (moedas.value[tamanho-1].cotacaoVenda);
+    if (moedaSaida == 'BRL') {
+        conversao2 = conversao1;
         console.log(conversao2)
-    })
-    xhr.send()
+    } else {
+        xhr.open("GET", "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaDia(moeda=@moeda,dataCotacao=@dataCotacao)?@moeda='" + moedaSaida + "'&@dataCotacao='" + dataAt + "'&$top=100&$format=json&$select=paridadeCompra,paridadeVenda,cotacaoCompra,cotacaoVenda,dataHoraCotacao,tipoBoletim")
+
+        xhr.addEventListener("load", function () {
+            let resposta = xhr.responseText
+            let moedas = JSON.parse(resposta)
+            console.log("moedas")
+            console.log(moedas)
+
+            let tamanho = moedas.value.length
+            // conversao de reais pra moeda de saida
+            conversao2 = conversao1 / (moedas.value[tamanho - 1].cotacaoVenda);
+            console.log(conversao2)
+        })
+        xhr.send()
+    }
 }
 
 // funcao para pegar a data atual
@@ -98,6 +106,6 @@ function dataAtual() {
     const ano = date.getFullYear();
     const dia = date.getDate();
     const mes = date.getMonth() + 1;
-    var data = (mes+"-"+dia+"-"+ano)
+    var data = (mes + "-" + dia + "-" + ano)
     return data
 }
