@@ -6,8 +6,7 @@ var botao = document.getElementById("idButton")
 
 botao.addEventListener("click", buscarCotacaoEntrada)
 var dataAt = dataAtual()
-var conversao1 = 0;
-var conversao2 = 0;
+var conversao1;
 
 // pegar cotacao de uma moeda 
 // fazer conversao da moeda pra rela e de real pra outra moeda
@@ -78,10 +77,12 @@ function buscarCotacaoEntrada() {
 function buscarCotacaoSaida() {
     var moedaSaida = document.getElementById("idMoedas2").value
     var xhr = new XMLHttpRequest()
+    var conversao2;
 
     if (moedaSaida == 'BRL') {
         conversao2 = conversao1;
         console.log(conversao2)
+        document.getElementById("idOut").value = "Conversão: " + conversao2.toFixed(2);
     } else {
         xhr.open("GET", "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaDia(moeda=@moeda,dataCotacao=@dataCotacao)?@moeda='" + moedaSaida + "'&@dataCotacao='" + dataAt + "'&$top=100&$format=json&$select=paridadeCompra,paridadeVenda,cotacaoCompra,cotacaoVenda,dataHoraCotacao,tipoBoletim")
 
@@ -94,9 +95,11 @@ function buscarCotacaoSaida() {
             let tamanho = moedas.value.length
             // conversao de reais pra moeda de saida
             conversao2 = conversao1 / (moedas.value[tamanho - 1].cotacaoVenda);
-            console.log(conversao2)
+            console.log(conversao2) 
+            document.getElementById("idOut").value = "Conversão: " + conversao2.toFixed(2);
         })
         xhr.send()
+        document.getElementById("idOut").value = "Conversão: " + conversao2.toFixed(2);
     }
 }
 
